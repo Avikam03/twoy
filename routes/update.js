@@ -5,7 +5,8 @@ const router = express.Router();
 const axios = require('axios');
 
 
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const { db } = require('../models/target');
 
 dotenv.config()
 
@@ -16,12 +17,13 @@ router.get('/', async (req, res) => {
 
     // var users
 
+
     const users = await axios.get(getURL, {
         headers: {
             'Authorization': 'Bearer ' + process.env.TOKEN
         }
     })
-    
+
     .then(twitterres => {
         // console.log(twitterres.data)
         console.log("hello")
@@ -43,11 +45,11 @@ router.get('/', async (req, res) => {
 
     if (!existingtarget) {
         console.log("doesn't exist rn")
-        targetsfriends = [];
+        targetsfriends = {};
 
         for(i of users) {
             // console.log(i["screen_name"]); // prints the name of every user followed by the screen_name
-            targetsfriends.push(i["screen_name"]); // pushes the screen_name of every user 
+            targetsfriends[i["screen_name"]] = i["screen_name"]; // pushes the screen_name of every user 
         }
 
         const newtarget = new Target({
@@ -58,16 +60,44 @@ router.get('/', async (req, res) => {
 
     } else {
         console.log("exists rn")
-        existingfriends = existingtarget.friends
-
+        var existingfriends = existingtarget.friends
+        var existingnewfriends = {}
+        if (existingtarget.newfriends){
+            existingnewfriends = existingtarget.newfriends
+        }
+        
+        console.log(existingfriends)
         for(i of users) {
-            if (!existingfriends.includes(i["screen_name"])) {
-                existingfriends.push(i["screen_name"]);
-                existingtarget.newfriends.push(i["screen_name"]);
+            if (existingfriends.has(i["screen_name"])){
+                
+            } else {
+                console.log("new")
+                console.log(i["screen_name"])
+                existingfriends.set(i["screen_name"], i["screen_name"]);
+                existingnewfriends.set(i["screen_name"], i["screen_name"]);
             }
         }
-        existingtarget.friends = existingfriends;
-        await existingtarget.save()
+
+        console.log("New Friends")
+        console.log(existingnewfriends)
+        console.log("Existing Friends")
+        console.log(existingfriends)
+
+        // db.collection("targets").updateOne(
+        //     {"screen_name" : screen_name},
+        //     { $set}
+        // )
+        
+        try{
+            existingtarget.friends = existingfriends;
+            existingtarget.newfriends = existingnewfriends;
+            const bakchodi = await existingtarget.save()
+            console.log(bakchodi)
+        } catch(err){
+            console.log("error araha bhai")
+            console.log(err)
+        }
+        
     }
 
     console.log("bruh")
@@ -80,3 +110,10 @@ router.get('/', async (req, res) => {
 
 module.exports = router;
 
+
+        // for(i of users) {
+        //     if (!existingfriends[i["screen_name"]]) {
+        //         existingfriends[i["screen_name"]] = i["screen_name"];
+        //         existingnewfriends[i["screen_name"]] = i["screen_name"];
+        //     }
+        // }
