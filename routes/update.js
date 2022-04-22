@@ -13,30 +13,44 @@ dotenv.config()
 
 router.get('/', async (req, res) => {
     const screen_name = req.query.screen_name;
-    const getURL = 'https://api.twitter.com/1.1/friends/list.json?cursor=-1&screen_name='  + screen_name + '&skip_status=true&include_user_entities=false';
+    var getURL = 'https://api.twitter.com/1.1/friends/list.json?screen_name='  + screen_name + '&skip_status=true&include_user_entities=false&cursor=';
 
-    // var users
+    var users = []
+    var cursor = "-1";
+    var response;
+    console.log("bruh")
+    console.log(process.env.TWITTER_ACCESS_TOKEN)
 
+    while (cursor != 0) {
+        var tempURL = getURL + cursor;
+        console.log(tempURL);
+        response = await axios.get(tempURL, {
+            headers: {
+                'Authorization': 'Bearer ' + process.env.TWITTER_ACCESS_TOKEN
+            }
+        })
+        .then(twitterres => {
+            console.log("hello")
+            // return  twitterres.data["users"];
+            return twitterres.data;
+        })
+        .catch(err => {
+            console.log('Error: ', err.message);
+            res.status(400).send("didn't work");
+            return
+        })
 
-    const users = await axios.get(getURL, {
-        headers: {
-            'Authorization': 'Bearer ' + process.env.TOKEN
-        }
-    })
+        console.log(response)
+        cursor = response["next_cursor_str"];
+        users = users.concat(response["users"]);
+    }
 
-    .then(twitterres => {
-        // console.log(twitterres.data)
-        console.log("hello")
-        // console.log(twitterres.data["users"])
-        // users = twitterres.data["users"];
-        return  twitterres.data["users"];
+    // const users = await axios.get(getURL, {
+    //     headers: {
+    //         'Authorization': 'Bearer ' + process.env.TOKEN
+    //     }
+    // })
 
-    })
-    .catch(err => {
-        console.log('Error: ', err.message);
-        res.status(400).send("didn't work");
-        return "error"
-    });
 
     console.log(users)
 
