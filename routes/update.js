@@ -73,6 +73,7 @@ router.get('/', async (req, res) => {
     } else {
         console.log("exists rn")
         var existingfriends = existingtarget.friends
+        console.log(typeof existingfriends);
         var existingnewfriends = {}
         if (existingtarget.newfriends){
             existingnewfriends = existingtarget.newfriends
@@ -87,14 +88,30 @@ router.get('/', async (req, res) => {
                 console.log(i["screen_name"])
                 // existingfriends.set(i["screen_name"], i["screen_name"]);
                 // existingnewfriends.set(i["screen_name"], i["screen_name"]);
-                existingfriends.set(i["screen_name"],{
+                // existingfriends.set(i["screen_name"],{
+                //     screen_name: i["screen_name"],
+                //     date: new Date()
+                // });
+                // existingnewfriends.set(i["screen_name"], {
+                //     screen_name: i["screen_name"],
+                //     date: new Date()
+                // });
+                existingfriends.set(i["screen_name"], {
                     screen_name: i["screen_name"],
                     date: new Date()
                 });
-                existingnewfriends.set(i["screen_name"], {
+                existingnewfriends[i["screen_name"]] = {
                     screen_name: i["screen_name"],
                     date: new Date()
-                });
+                };
+                // existingfriends.i["screen_name"] = {
+                //     screen_name: i["screen_name"],
+                //     date: new Date()
+                // };
+                // existingnewfriends.i["screen_name"] = {
+                //     screen_name: i["screen_name"],
+                //     date: new Date()
+                // };
             }
         }
 
