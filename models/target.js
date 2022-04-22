@@ -9,14 +9,27 @@ module.exports = mongoose.model('Target', new mongoose.Schema({
     id: String,
     screen_name: String,
     profile_background_image_url_https: String,
-    // friends: [User]
+    // friends: {
+    //     type: Map,
+    //     of: String
+    // },
+    // newfriends: {
+    //     type: Map,
+    //     of: String
+    // },
     friends: {
         type: Map,
-        of: String
+        of: new mongoose.Schema({
+            screen_name: String,
+            date: Date,
+          })
     },
     newfriends: {
         type: Map,
-        of: String
+        of: new mongoose.Schema({
+            screen_name: String,
+            date: Date,
+          })
     },
 }))
 

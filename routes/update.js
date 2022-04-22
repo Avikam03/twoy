@@ -13,7 +13,7 @@ dotenv.config()
 
 router.get('/', async (req, res) => {
     const screen_name = req.query.screen_name;
-    var getURL = 'https://api.twitter.com/1.1/friends/list.json?screen_name='  + screen_name + '&skip_status=true&include_user_entities=false&cursor=';
+    var getURL = 'https://api.twitter.com/1.1/friends/list.json?count=200&screen_name='  + screen_name + '&skip_status=true&include_user_entities=false&cursor=';
 
     var users = []
     var cursor = "-1";
@@ -35,6 +35,7 @@ router.get('/', async (req, res) => {
             return twitterres.data;
         })
         .catch(err => {
+            // console.log(err)
             console.log('Error: ', err.message);
             res.status(400).send("didn't work");
             return
@@ -44,13 +45,6 @@ router.get('/', async (req, res) => {
         cursor = response["next_cursor_str"];
         users = users.concat(response["users"]);
     }
-
-    // const users = await axios.get(getURL, {
-    //     headers: {
-    //         'Authorization': 'Bearer ' + process.env.TOKEN
-    //     }
-    // })
-
 
     console.log(users)
 
@@ -63,7 +57,11 @@ router.get('/', async (req, res) => {
 
         for(i of users) {
             // console.log(i["screen_name"]); // prints the name of every user followed by the screen_name
-            targetsfriends[i["screen_name"]] = i["screen_name"]; // pushes the screen_name of every user 
+            // targetsfriends[i["screen_name"]] = i["screen_name"]; // pushes the screen_name of every user 
+            targetsfriends[i["screen_name"]] = {
+                screen_name: i["screen_name"],
+                date: new Date(),
+            }
         }
 
         const newtarget = new Target({
@@ -87,8 +85,16 @@ router.get('/', async (req, res) => {
             } else {
                 console.log("new")
                 console.log(i["screen_name"])
-                existingfriends.set(i["screen_name"], i["screen_name"]);
-                existingnewfriends.set(i["screen_name"], i["screen_name"]);
+                // existingfriends.set(i["screen_name"], i["screen_name"]);
+                // existingnewfriends.set(i["screen_name"], i["screen_name"]);
+                existingfriends.set(i["screen_name"],{
+                    screen_name: i["screen_name"],
+                    date: new Date()
+                });
+                existingnewfriends.set(i["screen_name"], {
+                    screen_name: i["screen_name"],
+                    date: new Date()
+                });
             }
         }
 
@@ -105,8 +111,8 @@ router.get('/', async (req, res) => {
         try{
             existingtarget.friends = existingfriends;
             existingtarget.newfriends = existingnewfriends;
-            const bakchodi = await existingtarget.save()
-            console.log(bakchodi)
+            const tempvar = await existingtarget.save()
+            console.log(tempvar)
         } catch(err){
             console.log("error araha bhai")
             console.log(err)
