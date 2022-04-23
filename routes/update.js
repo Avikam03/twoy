@@ -78,6 +78,98 @@ router.get('/', async (req, res) => {
         if (existingtarget.newfriends){
             existingnewfriends = existingtarget.newfriends
         }
+        console.log("new friends")
+        console.log(existingnewfriends)
+
+        const currdate = new Date();
+
+        console.log("before for each")
+        existingnewfriends.forEach((value, key) => {
+            // console.log(value, key)
+            console.log(existingnewfriends.get(key))
+            console.log(existingnewfriends.get(key)["date"])
+            console.log(existingnewfriends.get(key)["date"].getFullYear())
+            // console.log(existingnewfriends[key])
+            // console.log(existingnewfriends[key]["date"])
+            var datevar = existingnewfriends.get(key)["date"]
+            if (datevar.getFullYear() == currdate.getFullYear()) {
+                console.log("here1")
+                if (datevar.getMonth() != currdate.getMonth()) {
+                    console.log("here2")
+                    if (datevar.getMonth() - currdate.getMonth() == -1) {
+                        console.log("here3")
+                        if (31 - (datevar.getDate()) + currdate.getDate() > 31) {
+                            console.log("here4")
+                            // delete existingnewfriends.
+                            existingnewfriends.delete(key)
+                            console.log("deleted")
+                        }
+                    } else {
+                        console.log("here5")
+                        existingnewfriends.delete(key)
+                    }
+                }
+            } else {
+                if (datevar.getMonth() == 12 && currdate.getMonth() == 1) {
+                    console.log("here6")
+                    if (31 - (datevar.getDate()) + currdate.getDate() > 31) {
+                        console.log("here7")
+                        // delete existingnewfriends.i
+                        existingnewfriends.delete(key)
+                        console.log("deleted")
+                    }
+                } else {
+                    console.log("here8")
+                    existingnewfriends.delete(key)
+                }
+
+            }
+        })
+        console.log("stopped")
+
+        // for (i in existingnewfriends) {
+            // console.log(existingnewfriends[i])
+            // console.log(existingnewfriends[i]["date"])
+
+            // if (existingnewfriends.i["date"].getFullYear() == currdate.getFullYear()) {
+            //     if (existingnewfriends.i["date"].getMonth() != currdate.getMonth()) {
+            //         if (existingnewfriends.i["date"].getMonth() - currdate.getMonth() == -1) {
+            //             if (31 - (existingnewfriends.i["date"].getDate()) + currdate.getDate() > 31) {
+            //                 delete existingnewfriends.i
+            //             }
+            //         }
+            //     }
+            // } else {
+            //     if (existingnewfriends.i["date"].getMonth() == 12 && currdate.getMonth() == 1) {
+            //         if (31 - (i["date"].getDate()) + currdate.getDate() > 31) {
+            //             delete existingnewfriends.i
+            //         }
+            //     }
+
+            // }
+        // }
+
+
+        // for (i of existingnewfriends) {
+        //     if (i["date"].getFullYear() == currdate.getFullYear()) {
+        //         if (i["date"].getMonth() != currdate.getMonth()) {
+        //             if (i["date"].getMonth() - currdate.getMonth() == -1) {
+        //                 if (31 - (i["date"].getDate()) + currdate.getDate() > 31) {
+        //                     delete i
+        //                 }
+        //             } else if (i["date"].getMonth() == 12 && currdate.getMonth() == 1) {
+        //                 if (31 - (i["date"].getDate()) + currdate.getDate() > 31) {
+        //                     delete i
+        //                 }
+        //             }
+
+        //             }
+        //         }
+        //     } else {
+
+        //     }
+        // }
+
         
         console.log(existingfriends)
         for(i of users) {
