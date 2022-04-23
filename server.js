@@ -17,6 +17,9 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.use('/api/update', require('./routes/update'))
 
+app.use('/api/target', require('./routes/target'))
+
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
