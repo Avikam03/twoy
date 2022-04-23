@@ -1,5 +1,4 @@
 const express = require('express');
-// const User = require('../models/user');
 const Target = require('../models/target');
 const router = express.Router();
 const axios = require('axios');
@@ -127,49 +126,6 @@ router.get('/', async (req, res) => {
         })
         console.log("stopped")
 
-        // for (i in existingnewfriends) {
-            // console.log(existingnewfriends[i])
-            // console.log(existingnewfriends[i]["date"])
-
-            // if (existingnewfriends.i["date"].getFullYear() == currdate.getFullYear()) {
-            //     if (existingnewfriends.i["date"].getMonth() != currdate.getMonth()) {
-            //         if (existingnewfriends.i["date"].getMonth() - currdate.getMonth() == -1) {
-            //             if (31 - (existingnewfriends.i["date"].getDate()) + currdate.getDate() > 31) {
-            //                 delete existingnewfriends.i
-            //             }
-            //         }
-            //     }
-            // } else {
-            //     if (existingnewfriends.i["date"].getMonth() == 12 && currdate.getMonth() == 1) {
-            //         if (31 - (i["date"].getDate()) + currdate.getDate() > 31) {
-            //             delete existingnewfriends.i
-            //         }
-            //     }
-
-            // }
-        // }
-
-
-        // for (i of existingnewfriends) {
-        //     if (i["date"].getFullYear() == currdate.getFullYear()) {
-        //         if (i["date"].getMonth() != currdate.getMonth()) {
-        //             if (i["date"].getMonth() - currdate.getMonth() == -1) {
-        //                 if (31 - (i["date"].getDate()) + currdate.getDate() > 31) {
-        //                     delete i
-        //                 }
-        //             } else if (i["date"].getMonth() == 12 && currdate.getMonth() == 1) {
-        //                 if (31 - (i["date"].getDate()) + currdate.getDate() > 31) {
-        //                     delete i
-        //                 }
-        //             }
-
-        //             }
-        //         }
-        //     } else {
-
-        //     }
-        // }
-
         
         console.log(existingfriends)
         for(i of users) {
@@ -188,14 +144,28 @@ router.get('/', async (req, res) => {
                 //     screen_name: i["screen_name"],
                 //     date: new Date()
                 // });
+
+                // till previous commit
+                // existingfriends.set(i["screen_name"], {
+                //     screen_name: i["screen_name"],
+                //     date: new Date()
+                // });
+                // existingnewfriends[i["screen_name"]] = {
+                //     screen_name: i["screen_name"],
+                //     date: new Date()
+                // };
+
+                // new
                 existingfriends.set(i["screen_name"], {
                     screen_name: i["screen_name"],
                     date: new Date()
                 });
-                existingnewfriends[i["screen_name"]] = {
+                existingnewfriends.set(i["screen_name"], {
                     screen_name: i["screen_name"],
                     date: new Date()
-                };
+                });
+
+
                 // existingfriends.i["screen_name"] = {
                 //     screen_name: i["screen_name"],
                 //     date: new Date()
@@ -212,10 +182,6 @@ router.get('/', async (req, res) => {
         console.log("Existing Friends")
         console.log(existingfriends)
 
-        // db.collection("targets").updateOne(
-        //     {"screen_name" : screen_name},
-        //     { $set}
-        // )
         
         try{
             existingtarget.friends = existingfriends;
@@ -238,11 +204,3 @@ router.get('/', async (req, res) => {
 })
 
 module.exports = router;
-
-
-        // for(i of users) {
-        //     if (!existingfriends[i["screen_name"]]) {
-        //         existingfriends[i["screen_name"]] = i["screen_name"];
-        //         existingnewfriends[i["screen_name"]] = i["screen_name"];
-        //     }
-        // }
