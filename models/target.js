@@ -13,6 +13,8 @@ module.exports = mongoose.model('Target', new mongoose.Schema({
     followers_count: Number,
     friends_count: Number,
     profile_image_url: String,
+    track_date_start: Date,
+    last_updated: Date,
     // friends: {
     //     type: Map,
     //     of: String

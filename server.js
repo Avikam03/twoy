@@ -17,7 +17,10 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.use('/api/update', require('./routes/update'))
 
-app.use('/api/target', require('./routes/target'))
+app.use('/api/new', require('./routes/new'))
+
+
+// app.use('/api/target', require('./routes/target'))
 
 
 app.listen(port, () => {
