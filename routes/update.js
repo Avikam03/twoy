@@ -32,6 +32,7 @@ router.get('/', async (req, res) => {
             existingtarget.last_updated.getFullYear() == currdate.getFullYear()) {
                 console.log("was updated recently")
             res.json(existingtarget)
+            res.end();
         }
         else {
             console.log("been more than a day since last update")
@@ -76,6 +77,7 @@ router.get('/', async (req, res) => {
                     users = users.concat(response["users"]);
                 } else {
                     res.json(existingtarget)
+                    res.end()
                     break
                 }
                 
@@ -182,6 +184,7 @@ router.get('/', async (req, res) => {
             existingtarget = await Target.findOne({screen_name: screen_name});
             console.log("ended")
             res.json(existingtarget)
+            res.end()
         }      
     }
 
