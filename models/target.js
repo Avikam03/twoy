@@ -7,8 +7,12 @@ const mongoose = require('mongoose');
 // export the user model
 module.exports = mongoose.model('Target', new mongoose.Schema({
     id: String,
+    name: String,
+    description: String,
     screen_name: String,
-    profile_background_image_url_https: String,
+    followers_count: Number,
+    friends_count: Number,
+    profile_image_url: String,
     // friends: {
     //     type: Map,
     //     of: String

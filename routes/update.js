@@ -12,13 +12,31 @@ dotenv.config()
 
 router.get('/', async (req, res) => {
     const screen_name = req.query.screen_name;
+    var getUserDataURL = 'https://api.twitter.com/1.1/users/show.json?screen_name=' + screen_name
     var getURL = 'https://api.twitter.com/1.1/friends/list.json?count=200&screen_name='  + screen_name + '&skip_status=true&include_user_entities=false&cursor=';
-
+    var target_data = {}
     var users = []
     var cursor = "-1";
     var response;
     console.log("bruh")
     console.log(process.env.TWITTER_ACCESS_TOKEN)
+
+    target_data = await axios.get(getUserDataURL, {
+        headers: {
+            'Authorization': 'Bearer ' + process.env.TWITTER_ACCESS_TOKEN
+        }
+    })
+    .then(twitterres => {
+        console.log("hello")
+        // return  twitterres.data["users"];
+        return twitterres.data;
+    })
+    .catch(err => {
+        // console.log(err)
+        console.log('Error: ', err.message);
+        res.status(400).send("didn't work");
+        return
+    })
 
     while (cursor != 0) {
         var tempURL = getURL + cursor;
@@ -39,6 +57,7 @@ router.get('/', async (req, res) => {
             res.status(400).send("didn't work");
             return
         })
+        
 
         console.log(response)
         cursor = response["next_cursor_str"];
@@ -64,8 +83,14 @@ router.get('/', async (req, res) => {
         }
 
         const newtarget = new Target({
+            name: target_data['name'],
+            description: target_data['description'],
+            followers_count: target_data['followers_count'],
+            friends_count: target_data['friends_count'],
+            profile_image_url: target_data['profile_image_url'],
             screen_name: screen_name,
-            friends: targetsfriends
+            friends: targetsfriends,
+            newfriends: {}
         })
         await newtarget.save()    
 
@@ -74,57 +99,58 @@ router.get('/', async (req, res) => {
         var existingfriends = existingtarget.friends
         console.log(typeof existingfriends);
         var existingnewfriends = {}
+        const currdate = new Date();
         if (existingtarget.newfriends){
             existingnewfriends = existingtarget.newfriends
-        }
-        console.log("new friends")
-        console.log(existingnewfriends)
 
-        const currdate = new Date();
-
-        console.log("before for each")
-        existingnewfriends.forEach((value, key) => {
-            // console.log(value, key)
-            console.log(existingnewfriends.get(key))
-            console.log(existingnewfriends.get(key)["date"])
-            console.log(existingnewfriends.get(key)["date"].getFullYear())
-            // console.log(existingnewfriends[key])
-            // console.log(existingnewfriends[key]["date"])
-            var datevar = existingnewfriends.get(key)["date"]
-            if (datevar.getFullYear() == currdate.getFullYear()) {
-                console.log("here1")
-                if (datevar.getMonth() != currdate.getMonth()) {
-                    console.log("here2")
-                    if (datevar.getMonth() - currdate.getMonth() == -1) {
-                        console.log("here3")
+            console.log("before for each")
+            existingnewfriends.forEach((value, key) => {
+                console.log(existingnewfriends.get(key))
+                console.log(existingnewfriends.get(key)["date"])
+                console.log(existingnewfriends.get(key)["date"].getFullYear())
+                var datevar = existingnewfriends.get(key)["date"]
+                if (datevar.getFullYear() == currdate.getFullYear()) {
+                    console.log("here1")
+                    if (datevar.getMonth() != currdate.getMonth()) {
+                        console.log("here2")
+                        if (datevar.getMonth() - currdate.getMonth() == -1) {
+                            console.log("here3")
+                            if (31 - (datevar.getDate()) + currdate.getDate() > 31) {
+                                console.log("here4")
+                                // delete existingnewfriends.
+                                existingnewfriends.delete(key)
+                                console.log("deleted")
+                            }
+                        } else {
+                            console.log("here5")
+                            existingnewfriends.delete(key)
+                        }
+                    }
+                } else {
+                    if (datevar.getMonth() == 12 && currdate.getMonth() == 1) {
+                        console.log("here6")
                         if (31 - (datevar.getDate()) + currdate.getDate() > 31) {
-                            console.log("here4")
-                            // delete existingnewfriends.
+                            console.log("here7")
+                            // delete existingnewfriends.i
                             existingnewfriends.delete(key)
                             console.log("deleted")
                         }
                     } else {
-                        console.log("here5")
+                        console.log("here8")
                         existingnewfriends.delete(key)
                     }
-                }
-            } else {
-                if (datevar.getMonth() == 12 && currdate.getMonth() == 1) {
-                    console.log("here6")
-                    if (31 - (datevar.getDate()) + currdate.getDate() > 31) {
-                        console.log("here7")
-                        // delete existingnewfriends.i
-                        existingnewfriends.delete(key)
-                        console.log("deleted")
-                    }
-                } else {
-                    console.log("here8")
-                    existingnewfriends.delete(key)
-                }
 
-            }
-        })
-        console.log("stopped")
+                }
+            })
+            console.log("stopped")
+        }
+
+        
+        console.log("new friends")
+        console.log(existingnewfriends)
+
+
+        
 
         
         console.log(existingfriends)
@@ -186,6 +212,11 @@ router.get('/', async (req, res) => {
         try{
             existingtarget.friends = existingfriends;
             existingtarget.newfriends = existingnewfriends;
+            existingtarget.name= target_data['name'];
+            existingtarget.description= target_data['description'];
+            existingtarget.followers_count= target_data['followers_count'];
+            existingtarget.friends_count= target_data['friends_count'];
+            existingtarget.profile_image_url= target_data['profile_image_url'];
             const tempvar = await existingtarget.save()
             console.log(tempvar)
         } catch(err){

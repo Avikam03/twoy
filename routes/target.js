@@ -11,8 +11,9 @@ router.get('/', async (req, res) => {
     if (obj) {
         res.send(obj)
     } else {
-        res.status(401).json("Object does not exist")
+        res.status(404).json("Object does not exist")
     }
 })
 
 module.exports = router;
+ 
