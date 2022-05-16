@@ -1,7 +1,10 @@
 const mongoose = require('mongoose')
-const config = require('config')
+// const config = require('config')
 
-const db = config.get('mongouri')
+const dotenv = require('dotenv')
+
+// const db = config.get('mongouri')
+const db = process.env.mongouri
 
 const connectDB = async () => {
     try {
